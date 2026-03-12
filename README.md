@@ -40,6 +40,19 @@ Copy this folder into your OpenClaw workspace skills directory:
 cp -R revive-openclaw ~/.openclaw/workspace/skills/
 ```
 
+## How to run it from OpenClaw (as a skill)
+
+This repository ships as an OpenClaw *skill folder* (scripts + docs). The most reliable way to run it is to execute its CLI entrypoints **on the machine where OpenClaw is installed**.
+
+From an OpenClaw chat/session you can simply ask the agent to run one of these commands:
+
+```bash
+cd ~/.openclaw/workspace/skills/revive-openclaw
+node scripts/revive.js --dry-run
+```
+
+(There is no special “skill runner” required; it’s just a Node CLI script inside the skill folder.)
+
 ## Quick start
 
 ### Help
