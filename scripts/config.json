@@ -1,0 +1,173 @@
+{
+  "name": "revive-openclaw",
+  "version": "1.0.0",
+  "description": "OpenClaw 系统恢复向导",
+  
+  "backup": {
+    "defaultDir": "~/.openclaw-backups",
+    "maxBackups": 10,
+    "compression": "gzip",
+    "excludePatterns": [
+      "*.log",
+      "node_modules/**",
+      ".cache/**",
+      "**/cache/**"
+    ],
+    "excludeSensitive": [
+      "openclaw.json.auth.tokens",
+      "mcporter.json.*.apiKey",
+      "*.env"
+    ]
+  },
+  
+  "restore": {
+    "defaultMode": "standard",
+    "modes": {
+      "minimal": {
+        "modules": ["config"]
+      },
+      "standard": {
+        "modules": ["config", "memory", "cron"]
+      },
+      "full": {
+        "modules": ["config", "memory", "cron", "skills", "agents", "evolution", "workspace"]
+      },
+      "selective": {
+        "modules": []
+      }
+    },
+    "verifyAfterRestore": true,
+    "autoRestartGateway": false
+  },
+  
+  "modules": {
+    "config": {
+      "priority": "P0",
+      "files": [
+        "openclaw.json",
+        "config/mcporter.json",
+        "config/channels.json"
+      ],
+      "verify": [
+        "openclaw config validate"
+      ]
+    },
+    "memory": {
+      "priority": "P1",
+      "files": [
+        "workspace/MEMORY.md",
+        "workspace/memory/*.md",
+        "workspace/.learnings"
+      ]
+    },
+    "cron": {
+      "priority": "P1",
+      "files": [
+        "cron/jobs.json"
+      ],
+      "verify": [
+        "openclaw cron list"
+      ]
+    },
+    "skills": {
+      "priority": "P2",
+      "files": [
+        "skills/*",
+        "extensions/*"
+      ],
+      "reinstall": true
+    },
+    "agents": {
+      "priority": "P2",
+      "files": [
+        "agents/*",
+        "workspace/docs/multi-agent-framework.md"
+      ]
+    },
+    "evolution": {
+      "priority": "P3",
+      "files": [
+        "workspace/scripts/self-improving*.py",
+        "workspace/scripts/skill-outcome-tracker.py",
+        "workspace/scripts/pattern-detector.sh",
+        "workspace/scripts/skill-recommender.py",
+        "workspace/scripts/skill-evolver-safe.sh"
+      ]
+    },
+    "workspace": {
+      "priority": "P2",
+      "files": [
+        "workspace/scripts/*",
+        "workspace/tools/*",
+        "workspace/config/*",
+        "workspace/workflows/*"
+      ]
+    },
+    "obsidian": {
+      "priority": "optional",
+      "files": [
+        "workspace/vaults/*"
+      ]
+    }
+  },
+  
+  "manualSteps": {
+    "description": "需要用户手动处理的步骤",
+    "steps": [
+      {
+        "id": "api-keys",
+        "description": "配置 API Keys 和 Tokens",
+        "items": [
+          "Discord Bot Token",
+          "Feishu App Credentials",
+          "MiniMax OAuth",
+          "Kimi API Key"
+        ]
+      },
+      {
+        "id": "external-pairing",
+        "description": "外部服务配对",
+        "items": [
+          "Discord Channel 配对",
+          "Feishu Bot 配对"
+        ]
+      },
+      {
+        "id": "docker",
+        "description": "Docker 容器启动",
+        "items": [
+          "wechat-exporter",
+          "mem0-qdrant"
+        ]
+      },
+      {
+        "id": "ssh",
+        "description": "SSH 密钥检查",
+        "items": [
+          "~/.ssh/github_openclaw 权限"
+        ]
+      }
+    ]
+  },
+  
+  "validation": {
+    "requiredCommands": [
+      "openclaw",
+      "tar",
+      "node"
+    ],
+    "healthCheck": {
+      "gateway": "openclaw gateway status",
+      "config": "openclaw config validate",
+      "cron": "openclaw cron list",
+      "skills": "openclaw skills list"
+    }
+  },
+  
+  "reporting": {
+    "recoveryReport": "RECOVERY.md",
+    "verificationReport": "VERIFICATION.md",
+    "stateFile": ".revive-state.json",
+    "logFile": ".revive.log"
+  }
+}
